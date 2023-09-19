@@ -44,12 +44,16 @@ module.exports = function(grunt) {
     babel: {
       options: {
         sourceMaps: 'inline',
-        loose: ['es6.modules'],
-        auxiliaryCommentBefore: 'istanbul ignore next'
+        presets: [
+          [
+            '@babel/preset-env',
+            { exclude: ['@babel/plugin-transform-typeof-symbol'] }
+          ]
+        ]
       },
       amd: {
         options: {
-          modules: 'amd'
+          plugins: [['@babel/plugin-transform-modules-amd', { loose: true }]]
         },
         files: [
           {
@@ -63,7 +67,10 @@ module.exports = function(grunt) {
 
       cjs: {
         options: {
-          modules: 'common'
+          plugins: [
+            ['@babel/plugin-transform-modules-commonjs', { loose: true }],
+            'add-module-exports'
+          ]
         },
         files: [
           {
@@ -77,22 +84,66 @@ module.exports = function(grunt) {
     },
     webpack: {
       options: {
+        mode: 'production',
+        optimization: { minimize: false },
+        target: ['web', 'es3'],
         context: __dirname,
         module: {
-          loaders: [
-            // the optional 'runtime' transformer tells babel to require the runtime instead of inlining it.
+          rules: [
             {
               test: /\.jsx?$/,
               exclude: /node_modules/,
-              loader:
-                'babel-loader?optional=runtime&loose=es6.modules&auxiliaryCommentBefore=istanbul%20ignore%20next'
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  [
+                    '@babel/preset-env',
+                    { exclude: ['@babel/plugin-transform-typeof-symbol'] }
+                  ]
+                ],
+                plugins: [
+                  ['@babel/plugin-transform-modules-commonjs', { loose: true }],
+                  // the optional 'runtime' transformer tells babel to require the runtime instead of inlining it.
+                  '@babel/plugin-transform-runtime',
+                  [
+                    'polyfill-corejs3',
+                    {
+                      version: require('core-js/package.json').version,
+                      method: 'usage-pure',
+                      shouldInjectPolyfill(name) {
+                        return (
+                          (name.startsWith('es.object.') ||
+                            name.startsWith('es.array.') ||
+                            name.startsWith('es.string.') ||
+                            name === 'es.global-this') &&
+                          // these are available everywhere
+                          ![
+                            'es.array.concat',
+                            'es.array.push',
+                            'es.array.slice',
+                            'es.array.splice',
+                            'es.array.unshift'
+                          ].includes(name)
+                        );
+                      }
+                    }
+                  ]
+                ]
+              }
             }
           ]
         },
+        resolve: {
+          alias: {
+            'source-map$': __dirname + '/lib/handlebars/compiler/source-map.js'
+          }
+        },
         output: {
-          path: 'dist/',
+          path: __dirname + '/dist/',
           library: 'Handlebars',
-          libraryTarget: 'umd'
+          libraryTarget: 'umd',
+          libraryExport: 'default',
+          globalObject: 'this'
         }
       },
       handlebars: {
@@ -112,7 +163,8 @@ module.exports = function(grunt) {
     requirejs: {
       options: {
         optimize: 'none',
-        baseUrl: 'dist/amd/'
+        baseUrl: 'dist/amd/',
+        paths: { 'source-map': 'handlebars/compiler/source-map' }
       },
       dist: {
         options: {
