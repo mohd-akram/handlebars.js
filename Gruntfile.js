@@ -55,7 +55,7 @@ module.exports = function(grunt) {
           {
             expand: true,
             cwd: 'lib/',
-            src: '**/!(index).js',
+            src: ['**/*.js', '!index.js'],
             dest: 'dist/amd/'
           }
         ]
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
           {
             cwd: 'lib/',
             expand: true,
-            src: '**/!(index).js',
+            src: ['**/*.js', '!index.js'],
             dest: 'dist/cjs/'
           }
         ]

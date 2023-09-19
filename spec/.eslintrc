@@ -37,6 +37,9 @@
   "env": {
     "mocha": true
   },
+  "parserOptions": {
+    "ecmaVersion": 2015
+  },
   "rules": {
     // Disabling for tests, for now.
     "no-path-concat": "off",

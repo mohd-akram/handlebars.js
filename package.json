@@ -74,6 +74,13 @@
     "webpack": "^1.12.6",
     "webpack-dev-server": "^1.12.1"
   },
+  "exports": {
+    "node": {
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.js"
+    },
+    "default": "./lib/handlebars/index.js"
+  },
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "browser": "./dist/cjs/handlebars.js",
