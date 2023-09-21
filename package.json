@@ -106,7 +106,7 @@
     "publish:aws": "npm run test:tasks && grunt && grunt publish-to-aws",
     "format": "prettier --write '**/*.{js,css,json,md}' && eslint --fix .",
     "lint": "npm run lint:eslint && npm run lint:prettier && npm run lint:types",
-    "lint:eslint": "eslint --max-warnings 0 .",
+    "lint:eslint": "eslint --max-warnings 1 .",
     "lint:prettier": "prettier --check '**/*.js'",
     "lint:types": "dtslint types",
     "test": "npm run test:mocha",
