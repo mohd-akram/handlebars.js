@@ -55,7 +55,7 @@ module.exports = function (grunt) {
           {
             cwd: 'lib/',
             expand: true,
-            src: '**/!(index).js',
+            src: '**/*.js',
             dest: 'dist/cjs/',
           },
         ],
@@ -85,13 +85,13 @@ module.exports = function (grunt) {
         },
       },
       handlebars: {
-        entry: './dist/cjs/handlebars.js',
+        entry: './dist/cjs/handlebars/index.js',
         output: {
           filename: 'handlebars.js',
         },
       },
       runtime: {
-        entry: './dist/cjs/handlebars.runtime.js',
+        entry: './dist/cjs/handlebars/index.runtime.js',
         output: {
           filename: 'handlebars.runtime.js',
         },
